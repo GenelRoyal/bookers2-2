@@ -3,6 +3,9 @@ before_action :ensure_correct_user, only: [:edit, :update]
 
   def show
     @book = Book.find(params[:id])
+    unless ViewCount.find_by(user_id: current_user.id, book_id: @book.id)
+      current_user.view_counts.create(book_id: @book.id)
+    end
     @book_comment = BookComment.new
     @user = @book.user
     @book_new = Book.new
@@ -11,8 +14,8 @@ before_action :ensure_correct_user, only: [:edit, :update]
   def index
     to  = Time.current.at_end_of_day
     from  = (to - 6.day).at_beginning_of_day
-    @books = Book.all.sort {|a,b| 
-      b.favorites.where(created_at: from...to).size <=> 
+    @books = Book.all.sort {|a,b|
+      b.favorites.where(created_at: from...to).size <=>
       a.favorites.where(created_at: from...to).size
     }
     @book = Book.new
