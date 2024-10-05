@@ -20,5 +20,7 @@ Rails.application.routes.draw do
   resources :chats, only: [:show, :create]
   resources :groups, only: [:new, :index, :show, :create, :edit, :update] do
     resource :group_users, only: [:create, :destroy]
+    resources :event_notices, only: [:new, :create]
+    get "event_notices" => "event_notices#sent"
   end
 end
